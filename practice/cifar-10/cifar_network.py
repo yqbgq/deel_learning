@@ -77,11 +77,6 @@ class cifar:
             layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='same'),
 
             # 卷积单元 4
-            layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
-            layers.Conv2D(256, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
-            layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='same'),
-
-            # 卷积单元 5
             layers.Conv2D(512, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
             layers.Conv2D(512, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
             layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='same'),
@@ -104,7 +99,7 @@ class cifar:
         acc_meter = metrics.Accuracy()                      # 定义准确率计算器
 
         for epoch in range(self.epochs):
-            with trange(len(self.train_db)) as t:
+            with trange(50000//128) as t:
 
                 iter_data = iter(self.train_db)             # 将训练数据集转换为迭代器
 
@@ -140,7 +135,7 @@ class cifar:
                            "".format(step, float(loss), acc_meter.result().numpy() * 100)
 
                     # 在每个 epoch 的最后，计算在测试集上的 ACC
-                    if step == len(self.train_db) - 1:
+                    if step == 50000//128 - 1:
                         total_num = 0
                         total_correct = 0
                         for x, y in self.test_db:   # 计算正确预测的样本数量
@@ -168,5 +163,5 @@ class cifar:
 if __name__ == "__main__":
     # 构造 cifar 实例，每个 batch的大小为 128， 学习率大小为 0.001
     # 学习 20 个 epoch， 正则化函数的 lambda 为 0.0001
-    c = cifar(128, 0.001, 50, 0.0001)
+    c = cifar(128, 0.001, 50, 0.001)
     c.train()
